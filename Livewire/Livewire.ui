@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LivewireClass</class>
+ <widget class="QMainWindow" name="LivewireClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1600</width>
+    <height>1000</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Livewire</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="MyGLCanvas" name="openGLWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1600</width>
+      <height>930</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>251</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QCheckBox" name="Geodesy_checkBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Geodesy</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="AnisGeoMin_checkBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Anisotropic Geodesy Min</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="AnisGeoMax_checkBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Anisotropic Geodesy Max</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1600</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOpen">
+    <property name="title">
+     <string>Open</string>
+    </property>
+    <addaction name="OpenMesh"/>
+   </widget>
+   <widget class="QMenu" name="menuSave">
+    <property name="title">
+     <string>Save</string>
+    </property>
+    <addaction name="SaveCurves"/>
+   </widget>
+   <addaction name="menuOpen"/>
+   <addaction name="menuSave"/>
+  </widget>
+  <action name="OpenMesh">
+   <property name="text">
+    <string>Mesh</string>
+   </property>
+  </action>
+  <action name="SaveCurves">
+   <property name="text">
+    <string>Curves</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MyGLCanvas</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyGLCanvas.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Livewire.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>Geodesy_checkBox</sender>
+   <signal>clicked()</signal>
+   <receiver>LivewireClass</receiver>
+   <slot>Geodesy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>963</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AnisGeoMin_checkBox</sender>
+   <signal>clicked()</signal>
+   <receiver>LivewireClass</receiver>
+   <slot>AnisGeodesyMin()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>968</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AnisGeoMax_checkBox</sender>
+   <signal>clicked()</signal>
+   <receiver>LivewireClass</receiver>
+   <slot>AnisGeodesyMax()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>28</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>180</x>
+     <y>978</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>OpenMesh</sender>
+   <signal>triggered()</signal>
+   <receiver>LivewireClass</receiver>
+   <slot>OpenMeshFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>381</x>
+     <y>948</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SaveCurves</sender>
+   <signal>triggered()</signal>
+   <receiver>LivewireClass</receiver>
+   <slot>SaveCurveFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>955</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>Geodesy()</slot>
+  <slot>AnisGeodesyMin()</slot>
+  <slot>AnisGeodesyMax()</slot>
+  <slot>OpenMeshFile()</slot>
+  <slot>SaveCurveFile()</slot>
+ </slots>
+</ui>

@@ -1,0 +1,110 @@
+是这样子的。。。
+
+1.对每个patch，先从你的包找到triangulation，用的是这个接口		delaunayRestrictedTriangulation(points,normals,point_num,&newPoints,&newNormals,&newPointNum,&tile_index,&tileNum,weights);
+把surface写到 m_surfaceIndex中，如下
+		std::vector<std::vector<int> > triangleCycle;
+			for ( int i=0; i<tileNum; i++){
+				std::vector<int> triangle;
+				for (int j=0;j<3;j++){
+					triangle.push_back(tile_index[i*3+j]);
+				}
+				triangleCycle.push_back(triangle);
+			}
+			m_surfaceIndex[patchID]=triangleCycle;
+		}
+
+2. 把所有的patch转化成统一的网格
+		m_verLu.clear();
+		m_faceLu.clear();
+		m_ctrmedgeLu.clear();
+	1）把vertices先弄出来，其实就是所有curve上的点，这样就不包含冗余节点
+		std::vector<AML::double3> vertexList;
+		int nodeSize = m_curveNet.nodes.size();
+		for(int j=0;j<nodeSize;j++){
+			vertexList.push_back(m_curveNet.nodes[j].pos);
+		}
+		for(int i=0;i<vertexList.size();i++){
+			m_verLu.push_back(vertexList[i].x);
+			m_verLu.push_back(vertexList[i].y);
+			m_verLu.push_back(vertexList[i].z);
+		}
+
+	2）把每个patch的面的三个点的局部id对应到全局的vertex id. 逐patch处理
+		1] 记住每条curve上的第一个点的起始id，其他点就是起始点坐标加上它在curve上的id。
+		std::vector<int> curveBeginIndex;
+		for(int j=0;j<m_curveNet.arcs.size();j++){
+			curveBeginIndex.push_back(vertexList.size());
+			vertexList.insert(vertexList.end(),m_curveNet.arcs[j].vertexList.begin(),
+				m_curveNet.arcs[j].vertexList.end());
+		}
+		curveBeginIndex.push_back(vertexList.size());
+		2] 找patch的边界,即cycle，上的点的全局id。 
+		std::vector<std::vector<int> > cyclesVertexIndex;
+		for(int j=0;j<m_cycleSet.size();j++){
+			std::vector<int> vertexIndex;
+			Cycle cycle = m_cycleSet[j];
+			for(int k=0;k<cycle.size();k++){
+				int arcID = cycle[k].arcID;	
+				int strNode = m_curveNet.arcs[arcID].endNodesID.first;
+				int endNode = m_curveNet.arcs[arcID].endNodesID.second;
+				std::vector<int> tempIndex;
+				tempIndex.push_back(strNode);
+				int curSize = m_curveNet.arcs[arcID].vertexList.size();
+				for(int m=0;m<curSize;m++){
+					tempIndex.push_back(curveBeginIndex[arcID]+m); //这里把id转成了全局坐标
+				}
+				tempIndex.push_back(endNode);
+				if(cycle[k].strEndID==2){
+					reverse(tempIndex.begin(),tempIndex.end());
+				}
+				tempIndex.pop_back();
+				vertexIndex.insert(vertexIndex.end(),tempIndex.begin(),tempIndex.end());
+			}
+			cyclesVertexIndex.push_back(vertexIndex);
+		}
+		3] 写成一个mesh
+		for(int i=0;i<m_surfaceIndex.size();i++){
+			for(int j=0;j<m_surfaceIndex[i].size();j++){
+				for(int k=0;k<3;k++){
+					int ind = m_surfaceIndex[i][j][k];
+					m_faceLu.push_back(cyclesVertexIndex[i][ind]);
+				}				
+			}
+		}
+		
+	3) control edge, 也写成了全局坐标
+		for(int i=0;i<m_curveNet.arcs.size();i++){
+			int strNode = m_curveNet.arcs[i].endNodesID.first;
+			int endNode = m_curveNet.arcs[i].endNodesID.second;
+			std::vector<int> tempIndex;
+			tempIndex.push_back(strNode);
+			int curSize = m_curveNet.arcs[i].vertexList.size();
+			for(int m=0;m<curSize;m++){
+				tempIndex.push_back(curveBeginIndex[i]+m);
+			}
+			tempIndex.push_back(endNode);
+
+			for(int j=0;j<tempIndex.size()-1;j++){
+				m_ctrmedgeLu.push_back(tempIndex[j]);
+				m_ctrmedgeLu.push_back(tempIndex[j+1]);
+			}
+		}
+		
+	4）开始smooth
+		cout<<"begin mesh fairing..."<<endl;
+		meshFair(); // 里面会调用 lu的代码
+		cout<<"end of mesh fairing..."<<endl;
+
+	5) 写到结果里
+		m_juSurface.clear();
+		int faceSize = m_faceLu.size()/3;
+		for(int i=0;i<faceSize;i++){
+			std::vector<AML::double3> tempFace;
+			for(int j=0;j<3;j++){
+				int tempVer = m_faceLu[i*3+j];
+				AML::double3 p;
+				p.x = m_verLu[tempVer*3];p.y = m_verLu[tempVer*3+1];p.z = m_verLu[tempVer*3+2];
+				tempFace.push_back(p);
+			}
+			m_juSurface.push_back(tempFace);
+		}

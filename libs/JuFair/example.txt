@@ -1,0 +1,33 @@
+/* datas */
+//std::vector<double> m_verLu;
+//intvector m_faceLu;
+//intvector m_ctrmedgeLu;
+//LuMesh m_meshFair; LuMesh defined in JuFair lib.
+
+
+void JuFair()
+{
+	double times = juSubdivisionTimes;
+	double alphan = 1.414;
+	double alpha0 = 0;
+
+	double delta = (alphan - alpha0)/(times==0?1:times);
+	double alpha = alpha0;
+
+	double ratio = 0.5;
+
+	//entry, include vertices, faces, and controalEdges. doSwap is true or false;
+	m_meshFair.InputData(m_verLu,m_faceLu,m_ctrmedgeLu, doSwap);
+
+	for( int i = 0; i < times; i ++)
+	{
+		cout<<endl<<"smooth:"<<i<<endl;
+		m_meshFair.LiepaRefine(alpha);
+		m_meshFair.JUFair( ratio, m_juFairingTimes);
+		alpha += delta;
+	}
+	m_verLu.clear();
+	m_faceLu.clear();
+	m_ctrmedgeLu.clear();
+	m_meshFair.OutputData(m_verLu,m_faceLu);
+}
