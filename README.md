@@ -1,7 +1,7 @@
 # LiveWire3D
 
 
-This repository contains the source code for the paper [Anisotropic geodesics for live-wire mesh segmentation](http://yixina.net/projects/Livewire/Livewire_PG14.pdf). The tool is similar to 2d livewire, usually used for image segmentation. User simply puts pair of seed on the shape, and a feature sensitive shortest path connecting the seeds is generated in interactive time. By using this tool, the user can easily extract the layout of objects in seconds to minutes.
+This repository contains the source code for the paper [Anisotropic geodesics for live-wire mesh segmentation](http://yixina.net/projects/Livewire/Livewire_PG14.pdf). The tool is similar to 2d [livewire](https://en.wikipedia.org/wiki/Livewire_Segmentation_Technique), usually used for image segmentation. User simply puts pair of seed on the shape, and a feature sensitive shortest path connecting the seeds is generated in interactive time. By using this tool, the user can easily extract the layout of objects from seconds to minutes.
 
 ![teaser](pictures/livewire_teaser.jpg)    
 
@@ -26,7 +26,7 @@ The compiled executable demo can be found [here](http://yixina.net/projects/Live
 ## Run Executable Demo
 ### Seeding and Tracing
 ![tool](pictures/anisgeodesic.gif) 
-Hold Shift + Mouse move to hightlight the seed under mouse cursor and trace the anisotropic geodesy connecting to the previous seed.
+How to Use: Hold Shift + Mouse move to hightlight the seed under mouse cursor and trace the anisotropic geodesy connecting the current seed and the previous one.
 Hold Shift + Left-Mouse to use the current path.
 
 ### Comparison
